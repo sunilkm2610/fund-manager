@@ -19,8 +19,8 @@ export default function WelcomeScreen() {
 
   return (
     <ScreenWrapper>
-      <View className="h-full">
-        <View className="pt-10">
+      <View className="h-full w-full">
+        <View className="pt-10 flex justify-center items-center">
           <Image
             source={require('../assets/welcome.png')}
             className="h-96 w-96 "

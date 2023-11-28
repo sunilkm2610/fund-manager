@@ -1,27 +1,29 @@
-import { createSlice } from '@reduxjs/toolkit'
-
+import {createSlice} from '@reduxjs/toolkit';
 
 // Define the initial state using that type
 const initialState = {
-    user: null,
-    userLoading: false
-}
+  user: null,
+  userLoading: false,
+  firstLoading: true,
+};
 
 export const userSlice = createSlice({
-    name: 'user',
-    // `createSlice` will infer the state type from the `initialState` argument
-    initialState,
-    reducers: {
-        setUser: (state, action) => {
-            state.user = action.payload;
-        },
-        setUserLoading: (state, action) => {
-            state.userLoading = action.payload;
-        }
+  name: 'user',
+  // `createSlice` will infer the state type from the `initialState` argument
+  initialState,
+  reducers: {
+    setUser: (state, action) => {
+      state.user = action.payload;
     },
-})
+    setUserLoading: (state, action) => {
+      state.userLoading = action.payload;
+    },
+    setFirstLoading: (state, action) => {
+      state.firstLoading = action.payload;
+    },
+  },
+});
 
-export const { setUser, setUserLoading } = userSlice.actions
+export const {setUser, setUserLoading, setFirstLoading} = userSlice.actions;
 
-
-export default userSlice.reducer
+export default userSlice.reducer;

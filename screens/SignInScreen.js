@@ -1,8 +1,18 @@
-import {View, Image, TextInput, ScrollView} from 'react-native';
+import {
+  View,
+  Image,
+  TextInput,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import React, {useState} from 'react';
 import ContainedButton from '../components/containedButton';
 import {useNavigation} from '@react-navigation/native';
-import {signInWithEmailAndPassword} from 'firebase/auth';
+import {
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 import {auth} from '../utils/config';
 import {setUserLoading} from '../redux/slices/user';
 import Loading from '../components/loading';
@@ -17,6 +27,31 @@ export default SignInScreen = () => {
 
   const {userLoading} = useSelector(state => state.user);
   const dispatch = useDispatch();
+
+  const sendPassowrd = async () => {
+    if (email != '') {
+      try {
+        dispatch(setUserLoading(true));
+        await sendPasswordResetEmail(auth, email);
+        dispatch(setUserLoading(false));
+        Snackbar.show({
+          text: 'Please check your email',
+          backgroundColor: 'green',
+        });
+      } catch (e) {
+        dispatch(setUserLoading(false));
+        Snackbar.show({
+          text: e.message,
+          backgroundColor: 'red',
+        });
+      }
+    } else {
+      Snackbar.show({
+        text: 'Email is required for password reset!',
+        backgroundColor: 'red',
+      });
+    }
+  };
 
   const onPressSignIn = async () => {
     if (email != '' && password != '') {
@@ -66,6 +101,11 @@ export default SignInScreen = () => {
             secureTextEntry
             onChangeText={value => setPassword(value)}
           />
+          <TouchableOpacity onPress={sendPassowrd} className="mr-1">
+            <Text className="text-blue-800 text-right text-xl font-bold">
+              Forgot?
+            </Text>
+          </TouchableOpacity>
         </View>
         <View>
           {userLoading ? (

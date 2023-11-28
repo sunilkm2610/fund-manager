@@ -3,8 +3,11 @@ import React from 'react';
 import expectedCalculator from '../utils/expectedCalculator';
 
 export default function FundCard({data, onLongPressFunction}) {
-    const expected = expectedCalculator(data?.date,data?.amount,data?.expectedFundInterest)
-
+  const expected = expectedCalculator(
+    data?.date,
+    data?.amount,
+    data?.expectedFundInterest,
+  );
 
   return (
     <TouchableOpacity
@@ -34,7 +37,7 @@ export default function FundCard({data, onLongPressFunction}) {
             Total invested
           </Text>
           <Text className="flex-1 text-gray-500 text-right text-2xl font-bold">
-            {data?.amount || 0}
+            {+data?.amount?.toLocaleString() || 0}
           </Text>
         </View>
         <View className="flex-row justify-between">
@@ -49,7 +52,7 @@ export default function FundCard({data, onLongPressFunction}) {
           <Text className="flex-1 text-left text-gray-400 text-lg font-bold">
             Invested Date
           </Text>
-          <Text className="flex-1 text-gray-500 text-right text-2xl font-bold">
+          <Text className="flex-1 text-gray-500 text-right text-lg font-bold">
             {data?.date}
           </Text>
         </View>

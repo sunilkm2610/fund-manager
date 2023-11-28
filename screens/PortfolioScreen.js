@@ -5,19 +5,18 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import colors from '../theme/colors';
 import FundTypeCard from '../components/fundTypeCard';
 import {useDispatch, useSelector} from 'react-redux';
-import {getDoc, getDocs, query, where} from 'firebase/firestore';
+import {getDocs, query, where} from 'firebase/firestore';
 import {auth, fundTypesRef, fundsRef} from '../utils/config';
 import EmptyList from '../components/emptyList';
 import {setFundType, setFundTypeLoading} from '../redux/slices/fundType';
 import Loading from '../components/loading';
 import expectedCalculator from '../utils/expectedCalculator';
-import {ArrowLeftIcon, TrashIcon} from 'react-native-heroicons/outline';
-import { signOut } from 'firebase/auth';
+import {signOut} from 'firebase/auth';
 
 export default function PortfolioScreen() {
   const navigation = useNavigation();
@@ -98,22 +97,37 @@ export default function PortfolioScreen() {
   };
 
   useEffect(() => {
-    if (user || isFocused) {
+    if (isFocused) {
       fetchFundTypes();
     }
-  }, [user, isFocused]);
+  }, [isFocused]);
+
+  const totalInvested = useMemo(() => {
+    return (
+      fundType?.reduce(
+        (accumulator, item) => accumulator + (parseInt(item.totalValue) ?? 0),
+        0,
+      ) ?? '0'
+    );
+  }, [fundType]);
+
+  const totalExpected = useMemo(() => {
+    return (
+      fundType?.reduce(
+        (accumulator, item) =>
+          accumulator + (parseInt(item.expectedValue) ?? 0),
+        0,
+      ) ?? '0'
+    );
+  }, [fundType]);
 
   return (
     <View>
       <View className="h-full bg-white relative">
         <View className="flex flex-row justify-between items-center px-3 pt-3">
-          {/* <TouchableOpacity
-            className="rounded-full p-2"
-            style={{backgroundColor: colors.theme.main}}
-            onPress={() => navigation.goBack()}>
-            <ArrowLeftIcon color={'white'} size="30" />
-          </TouchableOpacity> */}
-          <Text className="text-lg uppercase font-bold text-black">Portfolio</Text>
+          <Text className="text-lg uppercase font-bold text-black">
+            Portfolio
+          </Text>
           <TouchableOpacity
             className="rounded-lg p-2 border-2 cursor-pointer"
             style={{borderColor: 'rgb(248 113 113)'}}
@@ -127,19 +141,11 @@ export default function PortfolioScreen() {
         <View
           className="p-4 m-3 rounded-lg mb-3 z-10"
           style={{backgroundColor: `${colors.theme.main}`}}>
-          {/* <ImageBackground source={require("../assets/addfund.png")} resizeMode="cover" style={{ flex: 1, justifyContent: 'center' }}> */}
           <View className="flex flex-row justify-between">
             <View className="flex-1">
               <Text className="text-gray-300 text-xl font-bold">Invested</Text>
               <Text className="text-white text-left text-2xl font-bold">
-                ₹
-                {fundType
-                  ?.reduce(
-                    (accumulator, item) =>
-                      accumulator + parseInt(item.totalValue),
-                    0,
-                  )
-                  ?.toLocaleString() || 0}
+                ₹{totalInvested?.toLocaleString() || 0}
               </Text>
             </View>
             <View className="flex-1">
@@ -147,14 +153,7 @@ export default function PortfolioScreen() {
                 Expected
               </Text>
               <Text className="text-white text-right text-2xl font-bold">
-                ₹
-                {fundType
-                  ?.reduce(
-                    (accumulator, item) =>
-                      accumulator + parseInt(item.expectedValue),
-                    0,
-                  )
-                  ?.toLocaleString() || 0}
+                ₹{totalExpected?.toLocaleString() || 0}
               </Text>
             </View>
           </View>
@@ -170,57 +169,23 @@ export default function PortfolioScreen() {
               Profit
             </Text>
             <Text className="text-white text-right text-2xl font-bold">
-              ₹
-              {(
-                parseInt(
-                  fundType?.reduce(
-                    (accumulator, item) =>
-                      accumulator + parseInt(item.expectedValue),
-                    0,
-                  ),
-                ) -
-                parseInt(
-                  fundType?.reduce(
-                    (accumulator, item) =>
-                      accumulator + parseInt(item.totalValue),
-                    0,
-                  ),
-                )
-              ).toLocaleString()}
+              ₹{(totalExpected - totalInvested).toLocaleString()}
               <Text className="text-white text-right text-lg">
-                {" "}(
+                {' '}
+                (
                 {(
-                  ((parseInt(
-                    fundType?.reduce(
-                      (accumulator, item) =>
-                        accumulator + parseInt(item.expectedValue),
-                      0,
-                    ),
-                  ) -
-                    parseInt(
-                      fundType?.reduce(
-                        (accumulator, item) =>
-                          accumulator + parseInt(item.totalValue),
-                        0,
-                      ),
-                    )) /
-                    parseInt(
-                      fundType?.reduce(
-                        (accumulator, item) =>
-                          accumulator + parseInt(item.totalValue),
-                        0,
-                      ),
-                    )) *
+                  ((totalExpected - totalInvested) / totalInvested) *
                   100
-                ).toLocaleString()}
+                ).toFixed(2)}
                 %)
               </Text>
             </Text>
           </View>
-          {/* </ImageBackground> */}
         </View>
         <View className="flex-row justify-between px-3 mb-3">
-          <Text className="text-lg font-bold text-black">All Fund Category</Text>
+          <Text className="text-lg font-bold text-black">
+            All Fund Category
+          </Text>
           <TouchableOpacity
             className="bg-black justify-center p-2 rounded-lg"
             style={{backgroundColor: `${colors.theme.main}`}}

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
@@ -21,12 +21,10 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 //   UserIcon as UserSolid,
 // } from 'react-native-heroicons/solid';
 import {LogBox, Platform, View} from 'react-native';
-import colors from '../theme/colors';
-import {setUser} from '../redux/slices/user';
+import {setFirstLoading, setUser} from '../redux/slices/user';
 import {onAuthStateChanged} from 'firebase/auth';
 import {useDispatch, useSelector} from 'react-redux';
 import {auth} from '../utils/config';
-import ProfileScreen from '../screens/ProfileScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -41,6 +39,7 @@ export default AppNavigation = () => {
 
   onAuthStateChanged(auth, u => {
     dispatch(setUser(u));
+    dispatch(setFirstLoading(false));
   });
 
   if (user) {
@@ -57,7 +56,11 @@ export default AppNavigation = () => {
             name="AddFundType"
             component={AddFundTypeScreen}
           />
-          <Stack.Screen options={{headerShown: true, title: 'Add Fund'}} name="AddFund" component={AddFundScreen} />
+          <Stack.Screen
+            options={{headerShown: true, title: 'Add Fund'}}
+            name="AddFund"
+            component={AddFundScreen}
+          />
           <Stack.Screen
             options={{headerShown: false}}
             name="SingleFund"

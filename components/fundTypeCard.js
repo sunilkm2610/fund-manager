@@ -2,7 +2,7 @@ import {View, Text, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 
-export default function FundTypeCard({data, amount, currentAmount}) {
+export default function FundTypeCard({data}) {
   const navigation = useNavigation();
 
   return (
@@ -54,7 +54,6 @@ export default function FundTypeCard({data, amount, currentAmount}) {
           </Text>
         </View>
       </View>
-
       <View
         style={{
           borderBottomColor: 'gray',

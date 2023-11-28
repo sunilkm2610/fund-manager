@@ -73,9 +73,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.myportfolio"
+    namespace "com.notjust.fundmanager"
     defaultConfig {
-        applicationId "com.myportfolio"
+        applicationId "com.notjust.fundmanager"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

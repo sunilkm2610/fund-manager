@@ -29,6 +29,7 @@ export default function SingleFundScreen(props) {
   const [funds, setFunds] = useState([]);
   const [loading, setLoading] = useState(false);
   const [deleteFundConfirm, setDeleteFundConfirm] = useState(false);
+  const [deleteFundTypeLoading,setdeleteFundTypeLoading]= useState(false);
 
   const fetchFunds = async () => {
     const q = query(fundsRef, where('fundTypeId', '==', id));
@@ -45,8 +46,10 @@ export default function SingleFundScreen(props) {
 
   const deleteFundType = async () => {
     try {
+      setdeleteFundTypeLoading(true)
       const q = query(fundsRef, where('fundTypeId', '==', id));
 
+      
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach(doc => {
         deleteDoc(doc.ref);
@@ -54,7 +57,7 @@ export default function SingleFundScreen(props) {
 
       const deleteFundTypesRef = doc(db, 'fundTypes', id);
       await deleteDoc(deleteFundTypesRef);
-
+      setdeleteFundTypeLoading(false)
       navigation.goBack();
     } catch (error) {
       Snackbar.show({
@@ -129,7 +132,7 @@ export default function SingleFundScreen(props) {
       </View>
 
       <SafeAreaView>
-        {loading ? (
+        {loading || deleteFundTypeLoading ? (
           <Loading />
         ) : (
           <FlatList
